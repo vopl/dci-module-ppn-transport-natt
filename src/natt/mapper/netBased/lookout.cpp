@@ -98,25 +98,37 @@ namespace dci::module::ppn::transport::natt::mapper::netBased
                 _netChanged.raise();
             };
 
-            link._api->removed() += link._sol * [&,this]
+            link._api->removed() += link._sol * [id, this]
             {
+                auto iter = _links.find(id);
+                if(_links.end() == iter)
+                {
+                    return;
+                }
+                Link& link = iter->second;
                 link._sol.flush();
-                _links.erase(link._id);
+                _links.erase(iter);
                 _netChanged.raise();
             };
 
-            link._api.involvedChanged() += link._sol * [&,this](bool v)
+            link._api.involvedChanged() += link._sol * [id, this](bool v)
             {
                 if(!v)
                 {
+                    auto iter = _links.find(id);
+                    if(_links.end() == iter)
+                    {
+                        return;
+                    }
+                    Link& link = iter->second;
                     link._sol.flush();
-                    _links.erase(link._id);
+                    _links.erase(iter);
                     _netChanged.raise();
                 }
             };
         };
 
-        _netHost->linkAdded() += _sol * [&,this](LinkId id, const net::Link<>& api)
+        _netHost->linkAdded() += _sol * [setupLink, this](LinkId id, const net::Link<>& api)
         {
             setupLink(id, api);
             _netChanged.raise();
@@ -136,9 +148,9 @@ namespace dci::module::ppn::transport::natt::mapper::netBased
                     List<net::route::Entry4> route4{_netHost->route4().value()};
                     for(const net::route::Entry4& e : route4)
                     {
-                        if(e.gateway != net::Ip4Address{})
+                        if(e.nextHop != net::Ip4Address{})
                         {
-                            gateways.insert(e.gateway);
+                            gateways.insert(e.nextHop);
                         }
                     }
                 }

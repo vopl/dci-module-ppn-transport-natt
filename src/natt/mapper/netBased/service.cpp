@@ -85,7 +85,7 @@ namespace dci::module::ppn::transport::natt::mapper::netBased
         }
     {
         _revealTicker.setTickOwner(&_tol);
-        _revealTicker.onTick() += [this]{static_cast<MostService*>(this)->reveal();};
+        _revealTicker.tick() += [this]{static_cast<MostService*>(this)->reveal();};
         _revealTicker.interval(startAfter);
         _revealTicker.start();
     }
