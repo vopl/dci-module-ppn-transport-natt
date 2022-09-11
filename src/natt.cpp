@@ -71,7 +71,7 @@ namespace dci::module::ppn::transport
                 }
             }
 
-            return cmt::readyFuture();
+            return cmt::readyFuture(None{});
         };
 
         methods()->mapping() += sol() * [this]
