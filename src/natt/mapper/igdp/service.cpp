@@ -90,7 +90,7 @@ namespace dci::module::ppn::transport::natt::mapper::igdp
                     utils::net::ip::Address6 ip6;
                     if(utils::net::ip::fromString(state._externalIp, ip6))
                     {
-                        externalEp = net::Ip6Endpoint{{ip6, 0}, externalPort};
+                        externalEp = net::Ip6Endpoint{{{ip6}, 0}, externalPort};
                         return true;
                     }
                 }

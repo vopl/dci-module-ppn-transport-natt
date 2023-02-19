@@ -392,7 +392,7 @@ namespace dci::module::ppn::transport::natt::mapper::pmpPcp
             }
             else
             {
-                net::Ip6Endpoint ep6{{resp._externalAddress,0}, utils::endian::b2n(resp._externalPort)};
+                net::Ip6Endpoint ep6{{{resp._externalAddress},0}, utils::endian::b2n(resp._externalPort)};
                 externalEp = ep6;
             }
 
