@@ -80,15 +80,15 @@ namespace dci::module::ppn::transport::natt::mapper::igdp
                 String externalPortStr = resp.select_node("//NewReservedPort").node().text().get();
                 if(!externalPortStr.empty() && std::errc{} == std::from_chars(externalPortStr.c_str(), externalPortStr.c_str()+externalPortStr.size(), externalPort).ec)
                 {
-                    utils::net::ip::Address4 ip4;
-                    if(utils::net::ip::fromString(state._externalIp, ip4))
+                    utils::ip::Address4 ip4;
+                    if(utils::ip::fromString(state._externalIp, ip4))
                     {
                         externalEp = net::Ip4Endpoint{{ip4}, externalPort};
                         return true;
                     }
 
-                    utils::net::ip::Address6 ip6;
-                    if(utils::net::ip::fromString(state._externalIp, ip6))
+                    utils::ip::Address6 ip6;
+                    if(utils::ip::fromString(state._externalIp, ip6))
                     {
                         externalEp = net::Ip6Endpoint{{{ip6}, 0}, externalPort};
                         return true;
@@ -237,14 +237,14 @@ namespace dci::module::ppn::transport::natt::mapper::igdp
             //LOGI(_name<<" found host: "<<_soapServiceHostStr<<", path: "<<_soapServicePathStr);
 
             net::Ip4Endpoint soapServiceEp4;
-            if(utils::net::ip::fromString(soapServiceHostStr, soapServiceEp4.address.octets, soapServiceEp4.port))
+            if(utils::ip::fromString(soapServiceHostStr, soapServiceEp4.address.octets, soapServiceEp4.port))
             {
                 _soapServiceEp = soapServiceEp4;
             }
             else
             {
                 net::Ip6Endpoint soapServiceEp6;
-                if(utils::net::ip::fromString(soapServiceHostStr, soapServiceEp6.address.octets, soapServiceEp6.address.linkId, soapServiceEp6.port))
+                if(utils::ip::fromString(soapServiceHostStr, soapServiceEp6.address.octets, soapServiceEp6.address.linkId, soapServiceEp6.port))
                 {
                     _soapServiceEp = soapServiceEp6;
                 }

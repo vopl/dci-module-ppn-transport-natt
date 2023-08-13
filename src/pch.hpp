@@ -10,8 +10,8 @@
 #include <dci/host.hpp>
 #include <dci/config.hpp>
 #include <dci/poll/timer.hpp>
-#include <dci/utils/net/url.hpp>
-#include <dci/utils/net/ip.hpp>
+#include <dci/utils/uri.hpp>
+#include <dci/utils/ip.hpp>
 #include <dci/utils/atScopeExit.hpp>
 #include <dci/utils/b2h.hpp>
 #include <dci/utils/s2f.hpp>

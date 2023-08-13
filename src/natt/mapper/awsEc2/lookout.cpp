@@ -215,7 +215,7 @@ namespace dci::module::ppn::transport::natt::mapper::awsEc2
         std::string_view ip4Str{content.c_str() + headersSize, contentSize};
 
         net::Ip4Address ip4{};
-        if(!utils::net::ip::fromString(ip4Str, ip4.octets))
+        if(!utils::ip::fromString(ip4Str, ip4.octets))
         {
             LOGW(_name<<": bad ip address received: "<<content);
             return {};

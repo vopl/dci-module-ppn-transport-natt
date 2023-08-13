@@ -47,13 +47,13 @@ namespace dci::module::ppn::transport::natt::addr
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     std::string toString(const net::Ip4Endpoint& v)
     {
-        return utils::net::ip::toString(v.address.octets, v.port);
+        return utils::ip::toString(v.address.octets, v.port);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     std::string toString(const net::Ip6Endpoint& v)
     {
-        return utils::net::ip::toString(v.address.octets, v.address.linkId, v.port);
+        return utils::ip::toString(v.address.octets, v.address.linkId, v.port);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -70,13 +70,13 @@ namespace dci::module::ppn::transport::natt::addr
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     std::string toString(const net::Ip4Address& v)
     {
-        return utils::net::ip::toString(v.octets);
+        return utils::ip::toString(v.octets);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     std::string toString(const net::Ip6Address& v)
     {
-        return utils::net::ip::toString(v.octets, v.linkId);
+        return utils::ip::toString(v.octets, v.linkId);
     }
 
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
@@ -161,29 +161,35 @@ namespace dci::module::ppn::transport::natt::addr
     /////////0/////////1/////////2/////////3/////////4/////////5/////////6/////////7
     bool fromString(const std::string& str, api::Protocol& p, net::IpEndpoint& ep)
     {
-        auto scheme = utils::net::url::scheme(str);
-        auto authority = utils::net::url::authority(str);
-
-        if(scheme == "tcp4" || scheme == "tcp6")
-        {
-            p = api::Protocol::tcp;
-        }
-        else if(scheme == "udp4" || scheme == "udp6")
-        {
-            p = api::Protocol::udp;
-        }
-        else
-        {
+        utils::URI<> uri;
+        if(!utils::uri::parse(str, uri))
             return false;
-        }
 
-        if('4' == scheme.back())
-        {
-            net::Ip4Endpoint& ep4 = ep.sget<net::Ip4Endpoint>();
-            return utils::net::ip::fromString(authority, ep4.address.octets, ep4.port);
-        }
+        return std::visit([&]<class Alt>(const Alt& alt)
+                          {
+                              if constexpr(std::is_same_v<utils::uri::TCP4<>, Alt> || std::is_same_v<utils::uri::TCP6<>, Alt>)
+                                  p = api::Protocol::tcp;
+                              else if constexpr(std::is_same_v<utils::uri::UDP4<>, Alt> || std::is_same_v<utils::uri::UDP6<>, Alt>)
+                                  p = api::Protocol::udp;
+                              else
+                                  return false;
 
-        net::Ip6Endpoint& ep6 = ep.sget<net::Ip6Endpoint>();
-        return utils::net::ip::fromString(authority, ep6.address.octets, ep6.address.linkId, ep6.port);
+                              if constexpr(std::is_same_v<utils::uri::TCP4<>, Alt> || std::is_same_v<utils::uri::UDP4<>, Alt>)
+                              {
+                                  net::Ip4Endpoint& ep4 = ep.sget<net::Ip4Endpoint>();
+                                  if(alt._auth._port)
+                                      utils::ip::fromString(*alt._auth._port, ep4.port);
+                                  return utils::ip::fromString(utils::uri::host(alt), ep4.address.octets);
+                              }
+                              else if constexpr(std::is_same_v<utils::uri::TCP6<>, Alt> || std::is_same_v<utils::uri::UDP6<>, Alt>)
+                              {
+                                  net::Ip6Endpoint& ep6 = ep.sget<net::Ip6Endpoint>();
+                                  if(alt._auth._port)
+                                      utils::ip::fromString(*alt._auth._port, ep6.port);
+                                  return utils::ip::fromString(utils::uri::host(alt), ep6.address.octets, ep6.address.linkId);
+                              }
+
+                              return false;
+                          }, uri);
     }
 }

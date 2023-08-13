@@ -72,7 +72,7 @@ namespace dci::module::ppn::transport::natt::mapper::awsEc2
             return false;
         }
 
-        _external.value = "tcp4://" + utils::net::ip::toString(_l->external().octets, _internal.port);
+        _external.value = "tcp4://" + utils::ip::toString(_l->external().octets, _internal.port);
         return true;
     }
 }

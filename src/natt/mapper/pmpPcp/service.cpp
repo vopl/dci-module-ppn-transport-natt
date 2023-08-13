@@ -378,9 +378,9 @@ namespace dci::module::ppn::transport::natt::mapper::pmpPcp
 
             _pcpEpochTime = utils::endian::b2n(resp._epochTime);
 
-            uint32 scope = static_cast<uint32>(utils::net::ip::scope(resp._externalAddress));
+            uint32 scope = static_cast<uint32>(utils::ip::scope(resp._externalAddress));
 
-            if(scope & static_cast<uint32>(utils::net::ip::Scope::ip4))
+            if(scope & static_cast<uint32>(utils::ip::Scope::ip4))
             {
                 net::Ip4Endpoint ep4{{
                         resp._externalAddress[12],

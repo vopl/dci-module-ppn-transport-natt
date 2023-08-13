@@ -317,7 +317,7 @@ namespace dci::module::ppn::transport::natt::mapper::netBased
 
             for(const net::link::Ip4Address& la4 : _linkAddresses4)
             {
-                if(/*addr4 != la4.address &&*/ utils::net::ip::masked(la4.address.octets, la4.netmask.octets) == utils::net::ip::masked(addr4.octets, la4.netmask.octets))
+                if(/*addr4 != la4.address &&*/ utils::ip::masked(la4.address.octets, la4.netmask.octets) == utils::ip::masked(addr4.octets, la4.netmask.octets))
                 {
                     res.push_back(la4.address);
                 }
@@ -329,7 +329,7 @@ namespace dci::module::ppn::transport::natt::mapper::netBased
 
             for(const net::link::Ip6Address& la6 : _linkAddresses6)
             {
-                if(/*addr6 != la6.address &&*/ utils::net::ip::masked(la6.address.octets, la6.prefixLength) == utils::net::ip::masked(addr6.octets, la6.prefixLength))
+                if(/*addr6 != la6.address &&*/ utils::ip::masked(la6.address.octets, la6.prefixLength) == utils::ip::masked(addr6.octets, la6.prefixLength))
                 {
                     res.push_back(la6.address);
                 }
