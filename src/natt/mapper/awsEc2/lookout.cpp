@@ -162,14 +162,14 @@ namespace dci::module::ppn::transport::natt::mapper::awsEc2
 
         for(;;)
         {
-            utils::S2f<Bytes> receivedf {ch->received()};
+            utils::S2f receivedf = ch->received();
 
             if(0 == cmt::waitAny(closedf, receivedf))
             {
                 break;
             }
 
-            Bytes chunk = std::get<0>(receivedf.value());
+            Bytes chunk = receivedf.value();
             content += chunk.toString();
 
             if(!headersSize)

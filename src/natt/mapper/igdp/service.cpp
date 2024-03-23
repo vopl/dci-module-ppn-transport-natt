@@ -471,14 +471,14 @@ namespace dci::module::ppn::transport::natt::mapper::igdp
 
         for(;;)
         {
-            utils::S2f<Bytes> receivedf {sch->received()};
+            utils::S2f receivedf = sch->received();
 
             if(0 == cmt::waitAny(closedf, receivedf))
             {
                 break;
             }
 
-            Bytes chunk = std::get<0>(receivedf.value());
+            Bytes chunk = receivedf.value();
             content += chunk.toString();
 
             if(!headersSize)
